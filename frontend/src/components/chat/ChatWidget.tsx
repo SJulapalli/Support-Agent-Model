@@ -2,11 +2,12 @@ import { useState, useRef, useEffect } from 'react'
 import { useChat } from '../../hooks/useChat'
 import MessageBubble from './MessageBubble'
 import TypingIndicator from './TypingIndicator'
+import AgentActivityPanel from './AgentActivityPanel'
 
 export default function ChatWidget() {
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
-  const { messages, status, sendMessage } = useChat()
+  const { messages, status, isEscalated, actionLog, sendMessage, skipPacing } = useChat()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -23,20 +24,23 @@ export default function ChatWidget() {
     <div style={{ width: 420, height: 600, display: 'flex', flexDirection: 'column', border: '1px solid #ddd', borderRadius: 12, background: '#fff', overflow: 'hidden' }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid #eee', fontWeight: 600 }}>
         NorthShop Support
-        {status === 'escalated' && (
-          <span style={{ marginLeft: 8, fontSize: 12, color: '#888', fontWeight: 400 }}>
-            Transferred to human support
-          </span>
-        )}
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {isEscalated && (
+        <div style={{ background: '#fff3cd', borderBottom: '1px solid #ffc107', padding: '10px 20px', fontSize: 13, color: '#856404' }}>
+          Connecting you to a human agent...
+        </div>
+      )}
+
+      <div
+        onClick={skipPacing}
+        style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 12, cursor: 'default' }}
+      >
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
         ))}
-        {(status === 'streaming' || status === 'agent_working') && (
-          <TypingIndicator agentWorking={status === 'agent_working'} />
-        )}
+        {status === 'agent_working' && <AgentActivityPanel events={actionLog} />}
+        {status === 'streaming' && <TypingIndicator agentWorking={false} />}
         <div ref={bottomRef} />
       </div>
 

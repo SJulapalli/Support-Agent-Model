@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     voyage_api_key: str
     database_url: str
     shop_admin_url: str = "http://localhost:5173/admin"
+    active_site: str = "shopadmin"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

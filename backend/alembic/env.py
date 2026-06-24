@@ -3,9 +3,11 @@ from logging.config import fileConfig
 from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 from app.database import Base
-import app.models.customer  # noqa: F401
-import app.models.order     # noqa: F401
-import app.models.refund    # noqa: F401
+import app.models.customer          # noqa: F401
+import app.models.order             # noqa: F401
+import app.models.refund            # noqa: F401
+import app.models.agent_event       # noqa: F401
+import app.models.escalation_handoff  # noqa: F401
 
 config = context.config
 if config.config_file_name:
